@@ -6,6 +6,7 @@ from .models import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db   ##means from __init__.py import db
 import re
+from flask_login import login_user, login_required, logout_user, current_user
 
 # ------------------------------
 # Blueprint setup
@@ -26,6 +27,7 @@ def login():
         if user:
             if check_password_hash(user.password, password):
                 flash('Logged in successfully!', category='success')
+                login_user(user, remember=True)
                 return redirect(url_for('views.home'))
             else:
                 flash('Incorrect password, try again.', category='error')
@@ -36,9 +38,10 @@ def login():
 # Logout route
 # ------------------------------
 @auth.route('/logout')
+@login_required
 def logout():
-    # Placeholder logout page (will later clear session, etc.)
-    return "logout page"
+    logout_user()
+    return redirect(url_for('auth.login'))
 
 # ------------------------------
 # Sign-Up route
@@ -84,7 +87,7 @@ def sign_up():
                 password, method='pbkdf2:sha256'))
             db.session.add(new_user)
             db.session.commit()
-            
+            login_user(new_user, remember=True)
             flash('Account created successfully!', category='success')
             return redirect(url_for('views.home'))
     
