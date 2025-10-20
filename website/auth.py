@@ -33,7 +33,7 @@ def login():
                 flash('Incorrect password, try again.', category='error')
         else:
             flash('Email does not exist.', category='error')
-    return render_template('login.html')
+    return render_template('login.html', user=current_user)
 # ------------------------------
 # Logout route
 # ------------------------------
@@ -95,4 +95,4 @@ def sign_up():
             # return redirect(url_for('auth.login'))
     
     # Render the sign-up page (for GET requests)
-    return render_template('sign_up.html')
+    return render_template('sign_up.html', user=current_user)
